@@ -18,12 +18,15 @@ const storeSchema = new Schema(
     },
     location: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     image: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
+    items: { type: [storeItemSchema], default: [] },
     username: {
       type: String,
       required: true,

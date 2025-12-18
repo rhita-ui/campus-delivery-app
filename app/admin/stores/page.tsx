@@ -35,7 +35,7 @@ export default async function StoresAdminPage() {
       );
     }
 
-    const stores = await Store.find({}).lean();
+    const stores = await Store.find({}).populate({ path: 'items.productId', model: 'Product' }).lean();
     const serialized = JSON.parse(JSON.stringify(stores));
 
     return (
