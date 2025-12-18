@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import dbConnect from '@/app/db';
 import User from '@/app/models/user.model';
 import { verifyToken } from '@/app/utils/jwt';
 
-export async function GET(request) {
+export async function GET(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
         return NextResponse.json({ error: 'Missing Authorization' }, { status: 401 });

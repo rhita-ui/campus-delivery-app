@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import dbConnect from '@/app/db';
 import User from '@/app/models/user.model';
 import bcrypt from 'bcrypt';
 import { signToken } from '@/app/utils/jwt';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
     try {
         const { email, password } = await request.json();
         const conn = await dbConnect();
