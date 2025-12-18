@@ -12,7 +12,7 @@ const vendingMachineSchema = new Schema(
       type: String,
       required: true,
     },
-    hostel: {
+    building: {
       type: String,
       required: true,
     },
