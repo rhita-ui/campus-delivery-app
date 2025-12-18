@@ -1,0 +1,17 @@
+import { NextResponse } from "next/server";
+import dbConnect from "@/app/db";
+import Event from "@/app/models/events.model";
+
+export async function GET() {
+  try {
+    await dbConnect();
+    const events = await Event.find({}).sort({ date: 1 }).lean();
+    return NextResponse.json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch events" },
+      { status: 500 }
+    );
+  }
+}

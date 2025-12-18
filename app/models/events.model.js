@@ -18,6 +18,8 @@ const eventSchema = new Schema(
     time: String,
     venue: String,
     registrationLink: String,
+    image: String,
+    description: String,
   },
   { timestamps: true }
 );

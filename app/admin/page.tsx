@@ -12,6 +12,7 @@ import { deliveryItems, events, vendingMachines } from "@/lib/data";
 import dbConnect from "@/app/db";
 import Product from "@/app/models/product.model";
 import VendingMachine from "@/app/models/vendingMachine.model";
+import Event from "@/app/models/events.model";
 import { VendingMachinesClient } from "./vending-machines-client";
 import { VendingSyncClient } from "./vending-sync-client";
 
@@ -27,6 +28,7 @@ export default async function AdminDashboard() {
   try {
     const conn = await dbConnect();
     const dbProductsCount = conn ? await Product.countDocuments() : 0;
+    const dbEventsCount = conn ? await Event.countDocuments() : 0;
     const vendingMachinesData = conn
       ? await VendingMachine.find({})
           .populate({
@@ -39,10 +41,16 @@ export default async function AdminDashboard() {
       : [];
     const productsData = conn ? await Product.find({}).lean() : [];
 
+    // Convert MongoDB objects to plain JS objects
+    const plainVendingMachines = JSON.parse(
+      JSON.stringify(vendingMachinesData)
+    );
+    const plainProducts = JSON.parse(JSON.stringify(productsData));
+
     const stats = {
       deliveryItems: deliveryItems.length,
-      events: events.length,
-      vending: vendingMachinesData.length || vendingMachines.length,
+      events: dbEventsCount,
+      vending: plainVendingMachines.length || vendingMachines.length,
       dbProducts: dbProductsCount,
     };
 
@@ -94,32 +102,28 @@ export default async function AdminDashboard() {
               These are basic actions aligned with the app. You can extend them
               to use the database models in <code>app/models</code>.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Button variant="default" asChild>
-                <Link href="/admin/products" className="w-full">
-                  Manage products
-                </Link>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <Button variant="default" asChild className="rounded-lg">
+                <Link href="/admin/products">Manage products</Link>
               </Button>
-              <form action={syncEventsAction}>
-                <Button type="submit" variant="default" className="w-full">
-                  Sync events to DB
-                </Button>
-              </form>
+              <Button variant="default" asChild className="rounded-lg">
+                <Link href="/admin/events">Manage events</Link>
+              </Button>
               <div>
                 <VendingSyncClient />
               </div>
-              {vendingMachinesData.length > 0 && (
-                <div className="sm:col-span-2">
-                  <VendingMachinesClient
-                    machines={vendingMachinesData}
-                    products={productsData}
-                  />
-                </div>
-              )}
-              <Button variant="outline" asChild>
-                <Link href="/">View app homepage</Link>
-              </Button>
             </div>
+            {plainVendingMachines.length > 0 && (
+              <div className="pt-2">
+                <VendingMachinesClient
+                  machines={plainVendingMachines}
+                  products={plainProducts}
+                />
+              </div>
+            )}
+            <Button variant="outline" asChild className="w-full rounded-lg">
+              <Link href="/">View app homepage</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

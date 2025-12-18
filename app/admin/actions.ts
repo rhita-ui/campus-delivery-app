@@ -26,7 +26,6 @@ export async function loginAction(formData: FormData) {
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete("admin_auth");
-  return { ok: true };
 }
 
 // --- App-aligned admin commands ---
