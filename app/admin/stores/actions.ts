@@ -15,6 +15,11 @@ export async function createStoreAction(formData: FormData) {
     if (!id || !name || !description)
       return { ok: false, error: "All fields are required." };
 
+    const existing = await Store.findOne({ id });
+    if (existing) {
+      return { ok: false, error: `Store with id "${id}" already exists.` };
+    }
+
     await Store.create({
       id,
       name,
