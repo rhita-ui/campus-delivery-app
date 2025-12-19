@@ -41,6 +41,11 @@ const storeSchema = new Schema(
       type: String,
       required: true,
     },
+    phoneNumber: {
+      type: String,
+      required: false,
+      default: "",
+    },
     items: [storeItemSchema],
   },
   { timestamps: true }
