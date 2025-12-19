@@ -289,11 +289,12 @@ function ProductsManager({ data, type }: { data: any; type: string }) {
     const newImage = String(fd.get("image"));
     const newPrice = Number(fd.get("price"));
 
-    let newStatus = "";
+    let newAvailability = "";
+    let newQuantity = 0;
     if (type === "store") {
-      newStatus = String(fd.get("availability"));
+      newAvailability = String(fd.get("availability"));
     } else {
-      newStatus = String(fd.get("stock"));
+      newQuantity = Number(fd.get("quantity"));
     }
 
     const oldItems = [...items];
@@ -315,8 +316,9 @@ function ProductsManager({ data, type }: { data: any; type: string }) {
                   image: newImage,
                 }
               : undefined,
-            availability: type === "store" ? newStatus : item.availability,
-            stock: type !== "store" ? newStatus : item.stock,
+            availability:
+              type === "store" ? newAvailability : item.availability,
+            quantity: type !== "store" ? newQuantity : item.quantity,
           };
         }
         return item;
@@ -372,8 +374,10 @@ function ProductsManager({ data, type }: { data: any; type: string }) {
               item.productId?.image || item.image || "/placeholder.jpg";
             const description =
               item.productId?.Description || item.description || "";
-            const status = item.availability || item.stock;
-            const isOutOfStock = status === "outOfStock" || status === "out";
+            const status = item.availability;
+            const quantity = item.quantity ?? 0;
+            const isOutOfStock =
+              type === "store" ? status === "outOfStock" : quantity === 0;
 
             return (
               <Card
@@ -424,16 +428,31 @@ function ProductsManager({ data, type }: { data: any; type: string }) {
                         <span className="font-bold text-lg text-primary">
                           ₹{price}
                         </span>
-                        <Badge
-                          variant={isOutOfStock ? "destructive" : "secondary"}
-                          className="capitalize text-[10px] h-5 px-1.5"
-                        >
-                          {status === "inStock"
-                            ? "In Stock"
-                            : status === "in-stock"
-                            ? "In Stock"
-                            : "Out of Stock"}
-                        </Badge>
+                        {type === "store" ? (
+                          <Badge
+                            variant={isOutOfStock ? "destructive" : "secondary"}
+                            className="capitalize text-[10px] h-5 px-1.5"
+                          >
+                            {status === "inStock" ? "In Stock" : "Out of Stock"}
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant={isOutOfStock ? "destructive" : "secondary"}
+                            className={`capitalize text-[10px] h-5 px-1.5 ${
+                              !isOutOfStock && quantity <= 10
+                                ? "bg-orange-100 text-orange-700 hover:bg-orange-100"
+                                : !isOutOfStock
+                                ? "bg-green-100 text-green-700 hover:bg-green-100"
+                                : ""
+                            }`}
+                          >
+                            {isOutOfStock
+                              ? "Out of Stock"
+                              : quantity <= 10
+                              ? "Low Stock"
+                              : `In Stock: ${quantity}`}
+                          </Badge>
+                        )}
                       </div>
 
                       <Button
@@ -557,17 +576,15 @@ function ProductsManager({ data, type }: { data: any; type: string }) {
                   </div>
                 ) : (
                   <div>
-                    <Label htmlFor="stock">Stock Status</Label>
-                    <select
-                      id="stock"
-                      name="stock"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      defaultValue={editingItem?.stock || "in-stock"}
-                    >
-                      <option value="in-stock">In Stock</option>
-                      <option value="low">Low Stock</option>
-                      <option value="out">Out of Stock</option>
-                    </select>
+                    <Label htmlFor="quantity">Quantity</Label>
+                    <Input
+                      id="quantity"
+                      name="quantity"
+                      type="number"
+                      min="0"
+                      defaultValue={editingItem?.quantity ?? 0}
+                      required
+                    />
                   </div>
                 )}
               </div>

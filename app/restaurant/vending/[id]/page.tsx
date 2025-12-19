@@ -24,7 +24,6 @@ export default function VendingMachineDetails({
   useEffect(() => {
     const loadMachine = async () => {
       try {
-        setLoading(true);
         // Dynamically import the action to avoid build/serialization issues if any
         const { getVendingMachineById } = await import("../actions");
         const data = await getVendingMachineById(id);
@@ -36,35 +35,41 @@ export default function VendingMachineDetails({
           // We want to flatten this for easier display
           const productsList = data.items
             .filter((item: any) => item.productId) // Ensure product exists
-            .map((item: any) => ({
-              ...item.productId,
-              // Check availability from BOTH item overrides AND product
-              availability:
-                item.stock === "out-of-stock"
-                  ? "outOfStock"
-                  : item.productId.availability || "inStock",
-              // Use store/vending specific price if set, else product default
-              price: item.price || item.productId.price,
-            }));
+            .map((item: any) => {
+              // Check availablity based on quantity
+              const quantity = item.quantity ?? 0;
+              const availability = quantity > 0 ? "inStock" : "outOfStock";
+
+              return {
+                ...item.productId,
+                availability,
+                quantity, // Pass quantity through if needed
+                price: item.price || item.productId.price,
+              };
+            });
           setItems(productsList);
         } else {
           toast.error("Machine not found");
         }
       } catch (err) {
         console.error("Failed to load machine:", err);
-        toast.error("Failed to load machine details");
       } finally {
         setLoading(false);
       }
     };
+    const intervalId = setInterval(loadMachine, 2000); // Poll every 2 seconds
     loadMachine();
+
+    return () => clearInterval(intervalId);
   }, [id]);
 
   const getAvailabilityStatus = (availability: string) => {
-    if (availability === "outOfStock")
-      return { status: "outOfStock", label: "✗ Out of Stock" };
-    return { status: "inStock", label: "✓ Available" };
+    // This helper might be unused now if we inline logic, but keeping for safety or removing if confirmed unused.
+    // Logic moved inline below.
+    return { status: "inStock", label: "Available" };
   };
+
+  // ... (rest of code)
 
   const handleOrderProduct = async (productId: string) => {
     try {
@@ -127,9 +132,28 @@ export default function VendingMachineDetails({
               </p>
             ) : (
               items.map((product: any, index: number) => {
-                const { status, label } = getAvailabilityStatus(
-                  product.availability
-                );
+                const quantity = product.quantity ?? 0;
+                let statusInfo = {
+                  label: "Available",
+                  className: "bg-green-100 text-green-700 border-green-200",
+                };
+
+                if (quantity === 0) {
+                  statusInfo = {
+                    label: "Out of Stock",
+                    className:
+                      "bg-red-100 text-red-700 border-red-200 opacity-80",
+                  };
+                } else if (quantity <= 10) {
+                  statusInfo = {
+                    label: "Low Stock",
+                    className:
+                      "bg-orange-100 text-orange-700 border-orange-200",
+                  };
+                }
+
+                const isOrderingDisabled = ordering || quantity === 0;
+
                 return (
                   <Card
                     key={product._id}
@@ -163,18 +187,14 @@ export default function VendingMachineDetails({
                             ₹{product.price}
                           </span>
                           <span
-                            className={`text-xs px-3 py-1.5 rounded-full font-medium shadow-sm transition-all ${
-                              status === "inStock"
-                                ? "bg-success/20 text-success border border-success/30"
-                                : "bg-destructive/20 text-destructive border border-destructive/30"
-                            }`}
+                            className={`text-xs px-3 py-1.5 rounded-full font-medium shadow-sm transition-all border ${statusInfo.className}`}
                           >
-                            {label}
+                            {statusInfo.label}
                           </span>
                         </div>
                       </div>
                     </div>
-                    {status === "inStock" && (
+                    {quantity > 0 && (
                       <Button
                         size="sm"
                         className="w-full mt-3 bg-accent hover:bg-accent/90"

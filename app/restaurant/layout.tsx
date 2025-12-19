@@ -1,6 +1,8 @@
 import { CartProvider } from "@/components/cart-context";
 import { RestaurantLayoutNav } from "@/components/restaurant-layout-nav";
 
+export const dynamic = "force-dynamic";
+
 export default function RestaurantLayout({
   children,
 }: {

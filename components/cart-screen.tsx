@@ -34,6 +34,7 @@ interface CartScreenProps {
   roomNumber: string;
   setRoomNumber: (room: string) => void;
   onSaveAddress?: (hostel: string, room: string) => Promise<void> | void;
+  onCheckout: () => void;
 }
 
 export function CartScreen({
@@ -46,6 +47,7 @@ export function CartScreen({
   roomNumber,
   setRoomNumber,
   onSaveAddress,
+  onCheckout,
 }: CartScreenProps) {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [tempHostel, setTempHostel] = useState(selectedHostel);
@@ -250,6 +252,7 @@ export function CartScreen({
               <Button
                 className="w-full py-6 text-base"
                 disabled={totalItems === 0}
+                onClick={onCheckout}
               >
                 <CheckCircle2 className="h-5 w-5 mr-2" />
                 Checkout

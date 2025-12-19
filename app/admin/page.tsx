@@ -13,8 +13,6 @@ import dbConnect from "@/app/db";
 import Product from "@/app/models/product.model";
 import VendingMachine from "@/app/models/vendingMachine.model";
 import Event from "@/app/models/events.model";
-import { VendingMachinesClient } from "./vending-machines-client";
-import { VendingSyncClient } from "./vending-sync-client";
 import { AutoRefresh } from "@/components/auto-refresh";
 
 async function getAuth() {
@@ -118,18 +116,7 @@ export default async function AdminDashboard() {
                   Manage vending machines
                 </Link>
               </Button>
-              <div>
-                <VendingSyncClient />
-              </div>
             </div>
-            {plainVendingMachines.length > 0 && (
-              <div className="pt-2">
-                <VendingMachinesClient
-                  machines={plainVendingMachines}
-                  products={plainProducts}
-                />
-              </div>
-            )}
             <Button variant="outline" asChild className="w-full rounded-lg">
               <Link href="/">View app homepage</Link>
             </Button>

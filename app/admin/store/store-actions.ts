@@ -88,14 +88,14 @@ export async function updateProductAction(formData: FormData) {
         });
       }
     } else {
-      const stock = String(formData.get("stock"));
+      const quantity = Number(formData.get("quantity"));
 
       await VendingMachine.updateOne(
         { id: storeId, "items._id": itemId },
         {
           $set: {
             "items.$.price": price,
-            "items.$.stock": stock,
+            "items.$.quantity": quantity,
             "items.$.name": name, // Vending items have their own name field
           },
         }
@@ -172,9 +172,9 @@ export async function createStoreProductAction(formData: FormData) {
         { $push: { items: newItem } }
       );
     } else {
-      const stock = String(formData.get("stock") || "in-stock");
+      const quantity = Number(formData.get("quantity") || 0);
       // @ts-ignore
-      newItem.stock = stock;
+      newItem.quantity = quantity;
       // @ts-ignore
       newItem.name = name; // Vending items explicitly use name
 
