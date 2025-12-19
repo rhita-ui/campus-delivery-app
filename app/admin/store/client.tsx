@@ -168,7 +168,7 @@ function OrdersManager({
       } catch (e) {
         console.error("Polling error", e);
       }
-    }, 15000); // 15 seconds
+    }, 5000); // 5 seconds
     return () => clearInterval(interval);
   }, [storeId]);
 

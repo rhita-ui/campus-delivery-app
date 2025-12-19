@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+
 import dbConnect from "@/app/db";
 import Store from "@/app/models/store.model";
 import VendingMachine from "@/app/models/vendingMachine.model";
@@ -9,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { logoutAction } from "./actions";
 import { getStoreOrders } from "@/app/actions/order-actions";
+
+export const dynamic = "force-dynamic";
 
 async function getOwnerAuth() {
   const cookieStore = await cookies();
@@ -31,19 +34,27 @@ export default async function StoreDashboardPage() {
   let data = null;
   // Fetch store or vending machine
   if (auth.type === "store") {
-    // Check if dbId is ObjectId or custom id. 
-    // Auth cookie probably stores _id or custom id. 
+    // Check if dbId is ObjectId or custom id.
+    // Auth cookie probably stores _id or custom id.
     // Usually it stores _id. Let's assume _id.
-    let store = await Store.findById(auth.dbId).populate("items.productId").lean();
+    let store = await Store.findById(auth.dbId)
+      .populate("items.productId")
+      .lean();
     if (!store) {
       // Fallback to custom id if stored in cookie
-      store = await Store.findOne({ id: auth.dbId }).populate("items.productId").lean();
+      store = await Store.findOne({ id: auth.dbId })
+        .populate("items.productId")
+        .lean();
     }
     if (store) data = JSON.parse(JSON.stringify(store));
   } else {
-    let vm = await VendingMachine.findById(auth.dbId).populate("items.productId").lean();
+    let vm = await VendingMachine.findById(auth.dbId)
+      .populate("items.productId")
+      .lean();
     if (!vm) {
-      vm = await VendingMachine.findOne({ id: auth.dbId }).populate("items.productId").lean();
+      vm = await VendingMachine.findOne({ id: auth.dbId })
+        .populate("items.productId")
+        .lean();
     }
     if (vm) data = JSON.parse(JSON.stringify(vm));
   }
@@ -91,7 +102,11 @@ export default async function StoreDashboardPage() {
       </header>
 
       <main className="max-w-5xl mx-auto p-6">
-        <StoreDashboardClient data={data} type={auth.type} initialOrders={orders} />
+        <StoreDashboardClient
+          data={data}
+          type={auth.type}
+          initialOrders={orders}
+        />
       </main>
     </div>
   );
