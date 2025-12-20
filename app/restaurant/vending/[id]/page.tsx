@@ -75,7 +75,10 @@ export default function VendingMachineDetails({
   const { addToCart, cartItems } = useCart();
 
   // Calculate total items in cart for floating button
-  const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalCartItems = cartItems.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   const handleOrderProduct = (product: any) => {
     addToCart({
@@ -86,7 +89,7 @@ export default function VendingMachineDetails({
       source: "VENDING",
       sourceId: id,
       sourceModel: "VendingMachine",
-      image: product.image
+      image: product.image,
     });
   };
 

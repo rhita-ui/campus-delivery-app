@@ -16,15 +16,6 @@ export async function createOrderAction(
     const itemIds = Object.keys(items);
     if (itemIds.length === 0) return { ok: false, error: "Cart is empty" };
 
-    // Group items by machine/store to handle updates efficiently
-    // wait, items coming from 'deliveryItems' (static) or loaded from DB?
-    // The 'items' argument is { itemId: quantity }.
-    // 'deliveryItems' contains the definitions.
-    // However, for vending machine dynamic items, we need to find which machine they belong to.
-    // But currently the cart assumes 'deliveryItems' (static/global).
-    // If we want to support dynamic vending items in cart, we need to know their origin.
-    // For now, assuming the loop iterates over all items and tries to find and decrement.
-
     // Iterate over each item in the cart
     for (const itemId of itemIds) {
       const quantityToBuy = items[itemId];

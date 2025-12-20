@@ -135,24 +135,24 @@ export function DeliveryScreen({
   return (
     <div className="min-h-screen bg-white text-black font-sans pb-32">
       {/* Floating Header */}
-      <div className="sticky top-0 z-20 bg-white backdrop-blur-md transition-all border-b border-zinc-900/50">
+      <div className="sticky top-0 z-20 bg-[#1C45C2] backdrop-blur-md transition-all border-b border-white/5 shadow-sm">
         <div className="flex items-center justify-between p-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white active:scale-95 transition-transform shadow-sm"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#1C45C2] hover:bg-blue-50 active:scale-95 transition-all shadow-md"
           >
-            <ArrowLeft className="w-5 h-5 text-black" />
+            <ArrowLeft className="w-5 h-5 font-bold" />
           </button>
 
           <div className="flex gap-3">
-            {/* Hidden Search Input usually, keeping pill per mockup */}
+            {/* Search Input */}
             <div className="relative group">
               <div className="relative group w-full max-w-[200px] transition-all duration-300 focus-within:max-w-[240px]">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <Search className="w-4 h-4 text-gray-500" />
+                  <Search className="w-4 h-4 text-gray-400" />
                 </div>
                 <Input
-                  className="rounded-full bg-gray-100 border-none pl-10 h-10 w-full focus-visible:ring-1 focus-visible:ring-gray-300 text-sm placeholder:text-gray-500"
+                  className="rounded-full bg-white border-none pl-10 h-10 w-full focus-visible:ring-2 focus-visible:ring-black/10 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm transition-all"
                   placeholder="Search in app..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -160,9 +160,9 @@ export function DeliveryScreen({
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-gray-200"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-gray-100 text-gray-500 transition-colors"
                   >
-                    <X className="w-3 h-3 text-gray-500" />
+                    <X className="w-3 h-3" />
                   </button>
                 )}
               </div>
@@ -179,7 +179,7 @@ export function DeliveryScreen({
             <img
               src={store.image}
               alt="cover"
-              className="w-full h-full object-cover opacity-80"
+              className="w-full h-full object-cover opacity-100 shadow"
             />
           ) : (
             <div className="w-full h-full bg-gray-800" />
@@ -300,7 +300,7 @@ export function DeliveryScreen({
 
       {/* Recommended Section Title */}
       <div className="px-4 py-5">
-        <h2 className="text-base font-extrabold tracking-widest text-white uppercase mb-4 flex items-center gap-2">
+        <h2 className="text-base font-extrabold tracking-widest text-black uppercase mb-4 flex items-center gap-2">
           Menu{" "}
           <span className="text-zinc-600 text-xs lowercase font-medium">
             ({filteredItems.length})
@@ -328,27 +328,30 @@ export function DeliveryScreen({
                     ₹{item.price}
                   </div>
 
-                  <div className="flex items-center gap-1.5 mb-2 mt-auto">
-                    {/* Rating Dummy */}
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <span key={i} className="text-[10px] text-yellow-500">
-                          ★
-                        </span>
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-zinc-500">(15)</span>
-                  </div>
-
                   <p className="text-[13px] text-zinc-500 line-clamp-2 leading-relaxed font-medium mt-1">
                     {item.description}
                   </p>
 
                   <div className="mt-4 flex gap-4">
-                    <button className="w-8 h-8 rounded-full border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors">
-                      <Heart className="w-3.5 h-3.5" />
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors">
+                    {/* in future if adding a wishlist button add here */}
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (typeof window !== "undefined") {
+                          const url = window.location.href;
+                          if (navigator.share) {
+                            navigator
+                              .share({ title: item.name, url })
+                              .catch(() => {});
+                          } else {
+                            navigator.clipboard.writeText(url);
+                            alert("Link copied to clipboard!");
+                          }
+                        }
+                      }}
+                      className="w-8 h-8 rounded-full border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+                    >
                       <Share2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -382,25 +385,25 @@ export function DeliveryScreen({
                       qty === 0 ? (
                         <button
                           onClick={() => onAddToCart(item)}
-                          className="w-full bg-[#1c1c1c] text-[#d14444] font-extrabold text-sm py-2.5 rounded-xl border border-zinc-800 hover:bg-zinc-800 uppercase tracking-wider shadow-lg flex items-center justify-center gap-1 active:scale-95 transition-all"
+                          className="w-full bg-[#1C45C2] text-[#ffffff] font-extrabold text-sm py-2.5 rounded-xl  uppercase tracking-wider shadow-lg flex items-center justify-center gap-1 active:scale-95 transition-all"
                         >
                           ADD{" "}
                           <Plus className="w-3 h-3 absolute top-1.5 right-1.5 text-[10px]" />
                         </button>
                       ) : (
-                        <div className="w-full flex items-center justify-between bg-[#1c1c1c] border border-zinc-700 rounded-xl h-[38px] overflow-hidden shadow-lg">
+                        <div className="w-full flex items-center justify-between bg-[#1C45C2] rounded-xl h-[38px] overflow-hidden shadow-lg">
                           <button
                             onClick={() => onUpdateQuantity(item.id, -1)}
-                            className="w-9 h-full flex items-center justify-center text-white hover:bg-zinc-800 active:bg-zinc-700"
+                            className="w-9 h-full flex items-center justify-center text-white "
                           >
                             <Minus className="w-3.5 h-3.5 font-bold" />
                           </button>
-                          <span className="text-sm font-bold text-[#d14444] tabular-nums">
+                          <span className="text-sm font-bold text-[#ffffff] tabular-nums">
                             {qty}
                           </span>
                           <button
                             onClick={() => onUpdateQuantity(item.id, 1)}
-                            className="w-9 h-full flex items-center justify-center text-white hover:bg-zinc-800 active:bg-zinc-700"
+                            className="w-9 h-full flex items-center justify-center text-white"
                           >
                             <Plus className="w-3.5 h-3.5 font-bold" />
                           </button>
@@ -423,32 +426,6 @@ export function DeliveryScreen({
           })}
         </div>
       </div>
-
-      {/* Floating Cart Footer */}
-      {totalItems > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 z-40 animate-in slide-in-from-bottom-4 fade-in">
-          <div
-            onClick={onProceedToCart}
-            className="bg-[#d14444] text-white rounded-xl shadow-2xl p-3.5 flex items-center justify-between cursor-pointer hover:scale-[1.01] active:scale-[0.98] transition-all max-w-2xl mx-auto ring-1 ring-white/10"
-          >
-            <div className="flex flex-col pl-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">
-                {totalItems} ITEM{totalItems > 1 ? "S" : ""} ADDED
-              </span>
-              <span className="text-base font-extrabold">
-                ₹{totalPrice}{" "}
-                <span className="text-xs font-medium opacity-70 ml-1">
-                  plus taxes
-                </span>
-              </span>
-            </div>
-            <div className="flex items-center gap-2 pr-1">
-              <span className="text-sm font-bold tracking-wide">Next</span>
-              <ArrowLeft className="w-4 h-4 rotate-180" />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
