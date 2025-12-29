@@ -9,7 +9,6 @@ import {
   User as UserIcon,
   MapPin,
   Phone,
-  Mail,
   ShoppingBag,
 } from "lucide-react";
 import Link from "next/link";
@@ -26,13 +25,14 @@ interface Order {
     quantity: number;
     price: number;
   }>;
+  address?: string;
 }
 
 interface UserProfile {
   name: string;
   email: string;
   phone?: string;
-  address?: string; // This is the Hostel
+  address?: string;
   roomNumber?: string;
   profileImage?: string;
   orders?: Order[];
@@ -439,11 +439,9 @@ export function ProfileScreen() {
                       .map((i) => `${i.quantity}x ${i.name}`)
                       .join(", ")}
                   </p>
-                  {/* @ts-ignore */}
                   {order.address && (
                     <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1 border-t pt-2">
                       <MapPin className="w-3 h-3" />
-                      {/* @ts-ignore */}
                       {order.address}
                     </div>
                   )}

@@ -8,43 +8,21 @@ import crypto from "crypto";
 import { Types } from "mongoose";
 import { sendOrderNotification } from "@/app/utils/mail";
 import path from "path";
-import dotenv from "dotenv";
 import fs from "fs";
 
-// Helper to manually parse env file
 // Helper to manually parse env file
 function getEnvManual(key: string): string | undefined {
     try {
         const envPath = path.resolve(process.cwd(), '.env.local');
-        console.log(`[ManualEnv] Checking path: ${envPath}`);
 
         if (fs.existsSync(envPath)) {
             const content = fs.readFileSync(envPath, 'utf8');
-
-            // Debug: Log all keys found in the file (safely)
-            const allKeys = content.match(/^\s*([A-Z_]+)\s*=/gm) || [];
-            console.log(`[ManualEnv] Keys found in file: ${allKeys.map(k => k.split('=')[0].trim()).join(', ')}`);
-
-            // Robust regex: 
-            // 1. Start of line (with optional whitespace)
-            // 2. Key
-            // 3. Optional whitespace, =, optional whitespace
-            // 4. Value group: 
-            //    - optional quote
-            //    - content (lazy)
-            //    - optional quote
-            // 5. Ignore trailing comments or whitespace
             const regex = new RegExp(`^\\s*${key}\\s*=\\s*["']?(.*?)["']?\\s*(?:#.*)?$`, 'm');
             const match = content.match(regex);
 
             if (match) {
-                console.log(`[ManualEnv] Found value for ${key}`);
                 return match[1].trim();
-            } else {
-                console.log(`[ManualEnv] NO match for ${key}`);
             }
-        } else {
-            console.log(`[ManualEnv] File not found at ${envPath}`);
         }
     } catch (e) {
         console.error("Manual env parse failed:", e);
@@ -205,10 +183,7 @@ export async function verifyPayment({
         if (!order) throw new Error("Order not found");
 
         // Dynamic load for verification as well
-        // try {
-        //     const envPath = path.resolve(process.cwd(), '.env.local');
-        //     dotenv.config({ path: envPath, override: true });
-        // } catch (e) { /* ignore */ }
+
 
         let keySecret = process.env.RAZORPAY_KEY_SECRET;
         if (!keySecret) keySecret = getEnvManual('RAZORPAY_KEY_SECRET');
