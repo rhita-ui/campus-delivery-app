@@ -2,7 +2,7 @@
 
 import { use, useState, useEffect, useMemo } from "react";
 import { DeliveryScreen } from "@/components/delivery-screen";
-import { useCart } from "@/components/cart-context";
+import { useCart } from "@/app/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";

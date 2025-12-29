@@ -334,14 +334,12 @@ export async function getUserOrders(userId: string) {
           vm = await VendingMachine.findById(vid).select("name names");
         }
         if (!vm) {
-          // Try finding by other custom ID if exists? VendingMachine model usually just uses _id unless specified.
-          // Let's assume _id for now based on typical usage
+          // Try by custom id
+          vm = await VendingMachine.findOne({ id: vid }).select("name names");
         }
 
         if (vm) {
           const vName = vm.names || vm.name || "Vending Machine";
-          // Vending machines usually don't have phone numbers for users to call, maybe admin contact?
-          // We'll leave phone blank for now.
           vendingMap[vid as string] = { name: vName, phone: null };
         }
       } catch (e) {
@@ -443,11 +441,12 @@ export async function getAdminStats() {
           if (Types.ObjectId.isValid(sourceId)) {
             vm = await VendingMachine.findById(sourceId);
           }
-          // Assuming VendingMachine might also have custom ID logic or simple string id
-          // If not, we just rely on findById. But let's be safe.
-          // If VendingMachine model has 'id' field, we could check that too.
+          if (!vm) {
+            vm = await VendingMachine.findOne({ id: sourceId });
+          }
 
           if (vm) name = vm.names || vm.name || "Vending Machine";
+
           vendingStats.push({
             _id: sourceId.toString(),
             name,
@@ -613,6 +612,10 @@ export async function getAllOrdersForAdmin() {
         if (Types.ObjectId.isValid(vid as string)) {
           vm = await VendingMachine.findById(vid).select("name names");
         }
+        if (!vm) {
+          vm = await VendingMachine.findOne({ id: vid }).select("name names");
+        }
+
         if (vm) {
           const vName = vm.names || vm.name || "Vending Machine";
           vendingMap[vid as string] = { name: vName, phone: null };
@@ -711,7 +714,12 @@ export async function updateOrderStatusAction(
       return { ok: false, error: "Invalid status" };
     }
 
-    order.status = newStatus;
+    order.status = newStatus as
+      | "PENDING"
+      | "CONFIRMED"
+      | "PREPARING"
+      | "READY"
+      | "DELIVERED";
     await order.save();
 
     return { ok: true };

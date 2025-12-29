@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { hostels, categories } from "@/lib/data";
-import { useCart } from "@/components/cart-context";
+import { useCart } from "@/app/context/CartContext";
 import { useRouter } from "next/navigation";
 import { getStoresAction } from "./actions";
 import { ModeToggle } from "@/components/mode-toggle";

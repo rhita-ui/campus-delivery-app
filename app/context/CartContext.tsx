@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 
-interface CartItem {
+export interface CartItem {
   productId: string;
   name: string;
   price: number;
@@ -25,7 +25,7 @@ interface CartContextType {
   getCartCount: () => number;
   totals: {
     totalPrice: number;
-    totalQuantity: number;
+    totalItems: number;
   };
   selectedHostel: string;
   setSelectedHostel: (hostel: string) => void;
@@ -166,7 +166,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             (total, item) => total + item.price * item.quantity,
             0
           ),
-          totalQuantity: cartItems.reduce(
+          totalItems: cartItems.reduce(
             (count, item) => count + item.quantity,
             0
           ),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/components/cart-context";
+import { useCart } from "@/app/context/CartContext";
 import { ArrowLeft } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";

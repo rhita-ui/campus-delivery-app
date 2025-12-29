@@ -1,4 +1,3 @@
-import { CartProvider } from "@/components/cart-context";
 import { WebMobileLayout } from "@/components/web-mobile-layout";
 import { RestaurantLayoutNav } from "@/components/restaurant-layout-nav";
 import { GlobalCartFooter } from "@/components/global-cart-footer";
@@ -11,14 +10,12 @@ export default function RestaurantLayout({
   children: React.ReactNode;
 }) {
   return (
-    <CartProvider>
-      <WebMobileLayout>
-        <div className="h-full w-full overflow-y-auto no-scrollbar pb-20">
-          {children}
-        </div>
-        <GlobalCartFooter />
-        <RestaurantLayoutNav />
-      </WebMobileLayout>
-    </CartProvider>
+    <WebMobileLayout>
+      <div className="h-full w-full overflow-y-auto no-scrollbar pb-20">
+        {children}
+      </div>
+      <GlobalCartFooter />
+      <RestaurantLayoutNav />
+    </WebMobileLayout>
   );
 }
