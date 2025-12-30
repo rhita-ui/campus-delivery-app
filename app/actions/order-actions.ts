@@ -8,10 +8,8 @@ import crypto from "crypto";
 import { Types } from "mongoose";
 import { sendOrderNotification } from "@/app/utils/mail";
 import path from "path";
-import dotenv from "dotenv";
 import fs from "fs";
 
-// Helper to manually parse env file
 // Helper to manually parse env file
 function getEnvManual(key: string): string | undefined {
   try {
